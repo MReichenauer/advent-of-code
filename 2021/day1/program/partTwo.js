@@ -2,30 +2,23 @@ const lineReader = require('readline').createInterface({
     input: require('fs').createReadStream("../data.txt")
   });
   
-  let list = []
-  let inc = 0
-  let numberOfValues = 0
-  let currentWindowValue = 0
-  lineReader.on('line', function (line) {
-    numberOfValues++;
-    if (numberOfValues >= 3) {
-        currentWindowValue = 0;
-        numberOfValues = 0;
-        } else {
+  let measurements = []
+  let incCounter = 0
+  let measurmentWindows = []
 
-            currentWindowValue += Number(line);
-        }
-   
-      list.push(currentWindowValue)
-      console.log("Current Window Value: ", currentWindowValue)
-      console.log("Current List: ", list)
-     
+  lineReader.on('line', function (line) {
+    currentval = Number(line)
+    measurements.push(Number(line))
   });
   
   lineReader.on('close', function () {
-      for(i = 0; i < list.length - 1; i++) {      
-          if (list[i] < list[i+1]) inc++
-      } 
-      console.log("Answer: ", inc)
+    for(i = 0; i+3 <= measurements.length ; i++) {      
+        currentWindow = measurements[i]+measurements[i+1]+measurements[i+2]
+        measurmentWindows.push(currentWindow)
+    } 
+    for(i = 0; i < measurmentWindows.length - 1; i++) {
+        if (measurmentWindows[i] < measurmentWindows[i+1]) incCounter++
+    }
+    console.log("Answer: ", incCounter)
   });
   
