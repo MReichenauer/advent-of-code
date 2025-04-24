@@ -1,18 +1,22 @@
 const lineReader = require("readline").createInterface({
 	input: require("fs").createReadStream("../data.txt"),
 });
+
+const extractSum = (digits) => {
+	let firstAndLastDigit = `${digits[0]}${digits[digits.length - 1]}`;
+	if (firstAndLastDigit.length > 2) {
+		firstAndLastDigit = firstAndLastDigit[0] + firstAndLastDigit[firstAndLastDigit.length - 1];
+	}
+	return Number(firstAndLastDigit);
+};
+
 const convertToNumber = (line, i) => {
 	return (
-		evenTwoDigitNumbers.find((number) => number.key === line.slice(i, i + number.key.length)) ||
-		oddTwoDigitNumbers.find((number) => number.key === line.slice(i, i + number.key.length)) ||
+		twoDigitNumbers.find((number) => number.key === line.slice(i, i + number.key.length)) ||
 		oneDigitNumbers.find((number) => number.key === line.slice(i, i + number.key.length)) ||
-		false
+		null
 	);
 };
-let digits = [];
-let chardigits = [];
-let totalSum = 0;
-let iteration = 0;
 const oneDigitNumbers = [
 	{ key: "one", value: 1 },
 	{ key: "two", value: 2 },
@@ -24,7 +28,8 @@ const oneDigitNumbers = [
 	{ key: "eight", value: 8 },
 	{ key: "nine", value: 9 },
 ];
-const oddTwoDigitNumbers = [
+const twoDigitNumbers = [
+	{ key: "ten", value: 10 },
 	{ key: "eleven", value: 11 },
 	{ key: "twelve", value: 12 },
 	{ key: "thirteen", value: 13 },
@@ -34,9 +39,6 @@ const oddTwoDigitNumbers = [
 	{ key: "seventeen", value: 17 },
 	{ key: "eighteen", value: 18 },
 	{ key: "nineteen", value: 19 },
-];
-const evenTwoDigitNumbers = [
-	{ key: "ten", value: 10 },
 	{ key: "twenty", value: 20 },
 	{ key: "thirty", value: 30 },
 	{ key: "forty", value: 40 },
@@ -46,24 +48,22 @@ const evenTwoDigitNumbers = [
 	{ key: "eighty", value: 80 },
 	{ key: "ninety", value: 90 },
 ];
-lineReader.on("line", function (line) {
+let totalSum = 0;
+lineReader.on("line", (line) => {
+	const digits = [];
 	for (let i = 0; i < line.length; i++) {
 		if (!isNaN(line[i])) {
-			digits.push({ value: line[i], index: i, iteration });
+			digits.push(Number(line[i]));
 		} else {
-			const foundNumber = convertToNumber(line, i);
-			if (foundNumber) {
-				chardigits.push({ value: foundNumber.value, index: i, iteration });
+			const foundSpelledOutDigit = convertToNumber(line, i);
+			if (foundSpelledOutDigit) {
+				digits.push(foundSpelledOutDigit.value);
 			}
 		}
 	}
-	iteration++;
-	const calibrationValue = `${digits[1]}${digits[digits.length - 1]}`;
-	totalSum += Number(calibrationValue);
+	totalSum += extractSum(digits);
 });
 
-lineReader.on("close", function () {
-	console.log("Answer: ", totalSum);
-	console.log("digits", digits);
-	console.log("char", chardigits);
+lineReader.on("close", () => {
+	console.log("Answer:", totalSum);
 });
