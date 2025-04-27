@@ -48,6 +48,7 @@ const twoDigitNumbers = [
 	{ key: "eighty", value: 80 },
 	{ key: "ninety", value: 90 },
 ];
+
 let totalSum = 0;
 lineReader.on("line", (line) => {
 	const digits = [];
