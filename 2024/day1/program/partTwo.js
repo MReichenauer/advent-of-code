@@ -2,19 +2,33 @@ const lineReader = require("readline").createInterface({
 	input: require("fs").createReadStream("../data.txt"),
 });
 
-let current = 0;
-let weight = [];
+const leftList = [];
+const rightList = [];
 
 lineReader.on("line", function (line) {
-	if (line.length > 0) {
-		current += Number(line);
-	} else {
-		weight.push(current);
-		current = 0;
-	}
+	const currentLine = line.split(" ").filter((numberString) => numberString.length > 0);
+	leftList.push(Number(currentLine[0]));
+	rightList.push(Number(currentLine[1]));
 });
 
+const getSimilarityScore = (leftList, rightList) => {
+	const leftListSet = new Set(leftList);
+	const similarityTrackerMap = new Map();
+
+	for (let i = 0; i < rightList.length; i++) {
+		const value = rightList[i];
+		if (!leftListSet.has(value)) continue;
+
+		if (similarityTrackerMap.has(value)) {
+			similarityTrackerMap.set(value, similarityTrackerMap.get(value) + 1);
+		} else {
+			similarityTrackerMap.set(value, 1);
+		}
+	}
+
+	return leftList.reduce((accumulator, current) => accumulator + current * (similarityTrackerMap.get(current) ?? 0), 0);
+};
+
 lineReader.on("close", function () {
-	weight.sort((a, b) => b - a);
-	console.log("Answer: ", weight.at(0) + weight.at(1) + weight.at(2));
+	console.log("answer: ", getSimilarityScore(leftList, rightList));
 });
