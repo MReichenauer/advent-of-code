@@ -2,7 +2,7 @@ const lineReader = require("readline").createInterface({
 	input: require("fs").createReadStream("../data.txt"),
 });
 
-const inputData = {
+const submarine = {
 	horizontal: 0,
 	up: 0,
 	down: 0,
@@ -13,19 +13,19 @@ lineReader.on("line", function (line) {
 
 	switch (commandDirection) {
 		case "forward":
-			inputData.horizontal += Number(commandValue);
+			submarine.horizontal += Number(commandValue);
 			break;
 		case "down":
-			inputData.down += Number(commandValue);
+			submarine.down += Number(commandValue);
 			break;
 		case "up":
-			inputData.up += Number(commandValue);
+			submarine.up += Number(commandValue);
 			break;
 	}
 });
 
 lineReader.on("close", function () {
-	const answer = inputData.horizontal * Math.abs(inputData.up - inputData.down);
+	const answer = submarine.horizontal * Math.abs(submarine.up - submarine.down);
 
 	console.log("Answer: ", answer);
 });

@@ -2,28 +2,31 @@ const lineReader = require("readline").createInterface({
 	input: require("fs").createReadStream("../data.txt"),
 });
 
-const inputData = [];
+let submarine = {
+	horizontal: 0,
+	depth: 0,
+	aim: 0,
+};
+
 lineReader.on("line", function (line) {
-	const [passwordPolicy, password] = line.split(":");
-	const [allowedPossitions, letter] = passwordPolicy.split(" ");
-	const [firstPosition, secondPosition] = allowedPossitions.split("-").map((value) => Number(value) - 1);
-	inputData.push({ passwordPolicy: { firstPosition, secondPosition, letter }, password: password.trim() });
+	const [commandDirection, commandValue] = line.split(" ");
+
+	switch (commandDirection) {
+		case "forward":
+			submarine.horizontal += Number(commandValue);
+			submarine.depth += Number(commandValue) * submarine.aim;
+			break;
+		case "down":
+			submarine.aim += Number(commandValue);
+			break;
+		case "up":
+			submarine.aim -= Number(commandValue);
+			break;
+	}
 });
 
 lineReader.on("close", function () {
-	let approvedPasswords = 0;
-	for (const controll of inputData) {
-		const isFirstCharacter =
-			controll.password[controll.passwordPolicy.firstPosition] === controll.passwordPolicy.letter ? true : false;
-		const isLastCharacter =
-			controll.password[controll.passwordPolicy.secondPosition] === controll.passwordPolicy.letter ? true : false;
+	const answer = submarine.horizontal * submarine.depth;
 
-		if (isFirstCharacter === true && isLastCharacter === true) {
-			continue;
-		} else if (isFirstCharacter === true || isLastCharacter === true) {
-			approvedPasswords++;
-		}
-	}
-
-	console.log("Answer: ", approvedPasswords);
+	console.log("Answer: ", answer);
 });
