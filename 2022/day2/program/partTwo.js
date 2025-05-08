@@ -1,32 +1,56 @@
 const lineReader = require("readline").createInterface({
 	input: require("fs").createReadStream("../data.txt"),
 });
-
-let submarine = {
-	horizontal: 0,
-	depth: 0,
-	aim: 0,
+const endRoundWith = {
+	X: "lose",
+	Y: "draw",
+	Z: "win",
+};
+const shapes = {
+	rock: {
+		value: "A",
+		winsTo: "scissors",
+		losesTo: "paper",
+		score: 1,
+	},
+	paper: {
+		value: "B",
+		winsTo: "rock",
+		losesTo: "scissors",
+		score: 2,
+	},
+	scissors: {
+		value: "C",
+		winsTo: "paper",
+		losesTo: "rock",
+		score: 3,
+	},
 };
 
-lineReader.on("line", function (line) {
-	const [commandDirection, commandValue] = line.split(" ");
+const findShape = (shapeValue) => {
+	return Object.values(shapes).find((shape) => shape.value === shapeValue);
+};
 
-	switch (commandDirection) {
-		case "forward":
-			submarine.horizontal += Number(commandValue);
-			submarine.depth += Number(commandValue) * submarine.aim;
-			break;
-		case "down":
-			submarine.aim += Number(commandValue);
-			break;
-		case "up":
-			submarine.aim -= Number(commandValue);
-			break;
+const roundResult = (opponentValue, endRoundWith) => {
+	const opponentShape = findShape(opponentValue);
+	switch (endRoundWith) {
+		case "win":
+			return shapes[opponentShape.losesTo].score + 6;
+		case "lose":
+			return shapes[opponentShape.winsTo].score;
+		default:
+			return opponentShape.score + 3;
 	}
+};
+
+let playerScore = 0;
+
+lineReader.on("line", function (line) {
+	const [opponentValue, playerValue] = line.split(" ");
+	const result = roundResult(opponentValue, endRoundWith[playerValue]);
+	playerScore += result;
 });
 
 lineReader.on("close", function () {
-	const answer = submarine.horizontal * submarine.depth;
-
-	console.log("Answer: ", answer);
+	console.log("Answer: ", playerScore);
 });
