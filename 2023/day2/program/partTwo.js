@@ -1,56 +1,31 @@
 const lineReader = require("readline").createInterface({
 	input: require("fs").createReadStream("../data.txt"),
 });
-const endRoundWith = {
-	X: "lose",
-	Y: "draw",
-	Z: "win",
-};
-const shapes = {
-	rock: {
-		value: "A",
-		winsTo: "scissors",
-		losesTo: "paper",
-		score: 1,
-	},
-	paper: {
-		value: "B",
-		winsTo: "rock",
-		losesTo: "scissors",
-		score: 2,
-	},
-	scissors: {
-		value: "C",
-		winsTo: "paper",
-		losesTo: "rock",
-		score: 3,
-	},
-};
 
-const findShape = (shapeValue) => {
-	return Object.values(shapes).find((shape) => shape.value === shapeValue);
-};
-
-const roundResult = (opponentValue, endRoundWith) => {
-	const opponentShape = findShape(opponentValue);
-	switch (endRoundWith) {
-		case "win":
-			return shapes[opponentShape.losesTo].score + 6;
-		case "lose":
-			return shapes[opponentShape.winsTo].score;
-		default:
-			return opponentShape.score + 3;
-	}
-};
-
-let playerScore = 0;
+let answer = 0;
 
 lineReader.on("line", function (line) {
-	const [opponentValue, playerValue] = line.split(" ");
-	const result = roundResult(opponentValue, endRoundWith[playerValue]);
-	playerScore += result;
+	const game = line.split(";");
+	const firstRound = game[0].split(":")[1];
+	const rounds = [firstRound, ...game.slice(1)];
+
+	const cubesUsed = {
+		red: 0,
+		blue: 0,
+		green: 0,
+	};
+
+	for (let i = 0; i < rounds.length; i++) {
+		rounds[i].split(",").forEach((reveal) => {
+			const [quantity, color] = reveal.trim().split(" ");
+			if (cubesUsed[color] < Number(quantity)) {
+				cubesUsed[color] = Number(quantity);
+			}
+		});
+	}
+	answer += cubesUsed.red * cubesUsed.blue * cubesUsed.green;
 });
 
 lineReader.on("close", function () {
-	console.log("Answer: ", playerScore);
+	console.log("Answer: ", answer);
 });
