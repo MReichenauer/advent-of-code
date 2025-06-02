@@ -10,7 +10,7 @@ lineReader.on("line", function (line) {
 	const shouldIncrease = report[0] < report[1];
 
 	if (firstTwoValuesAbs === 0 || firstTwoValuesAbs > 3) return;
-	let isRaportSafe = true;
+	let isReportSafe = true;
 
 	for (let i = 0; i < report.length - 1; i++) {
 		const currentValue = report[i];
@@ -18,20 +18,20 @@ lineReader.on("line", function (line) {
 		const isDiffValid = Math.abs(currentValue - nextValue) >= 1 && Math.abs(currentValue - nextValue) <= 3;
 
 		if (!isDiffValid) {
-			isRaportSafe = false;
+			isReportSafe = false;
 			break;
 		}
 
 		if (shouldIncrease && nextValue < currentValue) {
-			isRaportSafe = false;
+			isReportSafe = false;
 			break;
 		}
 		if (!shouldIncrease && nextValue > currentValue) {
-			isRaportSafe = false;
+			isReportSafe = false;
 			break;
 		}
 	}
-	if (isRaportSafe) {
+	if (isReportSafe) {
 		amountOfSafeReports++;
 	}
 });
