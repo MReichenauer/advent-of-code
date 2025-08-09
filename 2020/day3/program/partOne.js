@@ -4,8 +4,8 @@ const lineReader = require("readline").createInterface({
 
 let treeCount = 0;
 let rightSlopeCount = 0;
-const calcRightSlopeIndex = (row, index) => {
-	return row[index % row.length];
+const calcRightSlopeIndex = (row, rightSlope) => {
+	return row[rightSlope % row.length];
 };
 const countTreesOnRow = (indexToCheck) => {
 	if (indexToCheck === "#") {
